@@ -1,0 +1,19 @@
+[redis_conf]
+host = "localhost"
+port = "6379"
+passWd = ""
+db = 0
+
+[database]
+db = "test"
+dbHost = "127.0.0.1"
+dbPort = "3306"
+dbUser = "root"
+dbPassWord = "ABCabc123!"
+
+# 日志相关配置
+[log]
+LogPath     = "./log/"  #日志路径
+MaxAge      = 168        #日志最大保存时间，单位小时，默认是7天
+RotateTime  = 2          #日志切割日志，单位为小时
+Level       = 4          #日志级别，0:panic,1:fatal,2:error,3:warn,4:info,5:debug,6:trace

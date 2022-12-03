@@ -1,4 +1,10 @@
-package hash
+/**
+* @Description：
+* @Author: cdx
+* @Date: 2022/12/1 9:03 下午
+ */
+
+package md5
 
 import (
 	"crypto/md5"
