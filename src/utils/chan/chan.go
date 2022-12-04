@@ -44,7 +44,6 @@ func f1() {
 // 缺点：（1）创建全局channel的时候需要知道channel的大小，不适用
 // 改进：（1）可以实现无限制的channel，类似于slice，自动扩容
 var AddChan = make(chan string, 10000)
-
 func f2() {
 
 	// 临时tmpUrls及预置的队列阈值大小
@@ -104,13 +103,12 @@ var mutex sync.Mutex
 var urls []string
 var timestamp = time.Now()
 var pageSize int = 100
-
 func f3() {
 	for {
 		mutex.Lock()
 
 		// 队列中长度已经大于了100，或者时间间隔大于60
-		if len(urls) > pageSize || time.Since(timestamp).Seconds() > 60 {
+		if len(urls) > pageSize || time.Since(timestamp).Seconds() > 6 {
 
 			var tmpUrls []string
 			if len(urls) > pageSize { // 队列中长度满足 > 100，取100个
@@ -134,3 +132,7 @@ func f3() {
 		time.Sleep(1 * time.Millisecond)
 	}
 }
+
+// （3）go channel实现没有限制的channel，不用担心每次初始化的时候
+// github：https://colobu.com/2021/05/11/unbounded-channel-in-go/
+// https://github.com/smallnest/chanx
