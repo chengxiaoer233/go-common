@@ -40,7 +40,11 @@ func f1() {
 
 // （2）模拟tcp的nagle算法，上游任务来了后积攒一批，满足一定数目或者时间到了就执行
 // 通过channel和定时器
+// 优点：（1）不用额外的创建一个全局锁，防止死锁的出现，使用channel进行通信
+// 缺点：（1）创建全局channel的时候需要知道channel的大小，不适用
+// 改进：（1）可以实现无限制的channel，类似于slice，自动扩容
 var AddChan = make(chan string, 10000)
+
 func f2() {
 
 	// 临时tmpUrls及预置的队列阈值大小
@@ -88,11 +92,45 @@ func f2() {
 				}
 			}
 		}
+
+		// 简单的进行流控处理
+		time.Sleep(1 * time.Millisecond)
 	}
 	return
 }
 
 // 通过时间戳和加锁判断队列
-func f3() {
+var mutex sync.Mutex
+var urls []string
+var timestamp = time.Now()
+var pageSize int = 100
 
+func f3() {
+	for {
+		mutex.Lock()
+
+		// 队列中长度已经大于了100，或者时间间隔大于60
+		if len(urls) > pageSize || time.Since(timestamp).Seconds() > 60 {
+
+			var tmpUrls []string
+			if len(urls) > pageSize { // 队列中长度满足 > 100，取100个
+				tmpUrls = append(tmpUrls, urls[:pageSize]...)
+				urls = urls[pageSize:]
+			} else { // 时间间隔到了，取出所有
+				tmpUrls = append(tmpUrls, urls[:len(urls)]...)
+				urls = urls[0:0]
+			}
+
+			// 计时器重新开始计时
+			timestamp = time.Now()
+
+			if len(tmpUrls) > 0 {
+				// do something
+			}
+		}
+		mutex.Unlock()
+
+		// 简单的控制并发
+		time.Sleep(1 * time.Millisecond)
+	}
 }
