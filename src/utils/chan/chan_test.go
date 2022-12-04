@@ -37,3 +37,18 @@ func Test_f2(t *testing.T) {
 		})
 	}
 }
+
+func Test_f3(t *testing.T) {
+	tests := []struct {
+		name string
+	}{
+		{
+			"chan func2.1 : 队列满足大小条件或定时时间到了触发，使用全局锁和slice",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			f3()
+		})
+	}
+}
